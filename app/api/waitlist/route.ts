@@ -1,6 +1,7 @@
 import WelcomeTemplate from "@/template/welcome";
 import { flattenObject } from "@/lib/flatten";
 import { appendFlattenedRow } from "@/lib/google-sheets";
+import { siteConfig } from "@/lib/site";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
@@ -20,23 +21,6 @@ const ratelimit = new Ratelimit({
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const NAME_KEYS = ["name", "firstName", "user.name", "profile.name"];
-
-function findEmail(flattened: Record<string, string>): string | undefined {
-  if (flattened.email) return flattened.email;
-  const nestedEmail = Object.entries(flattened).find(
-    ([key]) => key === "email" || key.endsWith(".email"),
-  );
-  return nestedEmail?.[1];
-}
-
-function findName(flattened: Record<string, string>): string {
-  for (const key of NAME_KEYS) {
-    if (flattened[key]) return flattened[key];
-  }
-  return "there";
-}
-
 export async function POST(request: NextRequest) {
   let ip: string;
   const xForwardedForHeader = request.headers.get("x-forwarded-for");
@@ -51,8 +35,7 @@ export async function POST(request: NextRequest) {
   if (!results.success) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
-    const body: Record<string, string> = await request.json();
-
+  const body: Record<string, unknown> = await request.json();
 
   if (!body || typeof body !== "object" || Array.isArray(body)) {
     return NextResponse.json(
@@ -64,23 +47,35 @@ export async function POST(request: NextRequest) {
   body.submittedAt = new Date().toISOString();
 
   try {
-    await appendFlattenedRow(body);
-  } catch {
+    await appendFlattenedRow(flattenObject(body));
+  } catch (error) {
+    console.error("Failed to save to waitlist", error);
     return NextResponse.json(
       { error: "Failed to save to waitlist" },
       { status: 500 },
     );
   }
 
-  const { error } = await resend.emails.send({
-    from: "Waitlist Template <no-reply@sashflow.com>",
-    to: body.email,
-    subject: "Welcome to the platform",
-    react: WelcomeTemplate({ userFirstName: body.name }),
-  });
+  const email =
+    typeof body.email === "string" && EMAIL_REGEX.test(body.email)
+      ? body.email
+      : undefined;
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (email) {
+    const displayName =
+      typeof body.name === "string" && body.name.trim()
+        ? body.name.trim()
+        : "there";
+    const { error } = await resend.emails.send({
+      from: "Waitlist Template <no-reply@sashflow.com>",
+      to: email,
+      subject: `You're on the ${siteConfig.name} founding list`,
+      react: WelcomeTemplate({ userFirstName: displayName }),
+    });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
 
   return NextResponse.json(

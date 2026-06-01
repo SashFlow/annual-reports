@@ -16,6 +16,8 @@ export function flattenObject(
         result,
         flattenObject(value as Record<string, unknown>, newKey),
       );
+    } else if (typeof value === "boolean") {
+      result[newKey] = value ? "Yes" : "No";
     } else {
       result[newKey] = String(value);
     }

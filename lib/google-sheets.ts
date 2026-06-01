@@ -13,6 +13,13 @@ function getSheetsClient() {
   return google.sheets({ version: "v4", auth });
 }
 
+function toSheetCell(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (Array.isArray(value)) return value.map(String).join(", ");
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  return String(value);
+}
+
 export async function appendFlattenedRow(
   flattened: Record<string, string>,
 ): Promise<void> {
@@ -54,7 +61,7 @@ export async function appendFlattenedRow(
     if (header === "submittedAt") {
       return flattened.submittedAt ?? new Date().toISOString();
     }
-    return flattened[header] ?? "";
+    return toSheetCell(flattened[header]);
   });
 
   await sheets.spreadsheets.values.append({
