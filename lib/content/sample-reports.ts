@@ -1,9 +1,7 @@
 /**
  * Sample annual reports shown on the landing page.
  *
- * Add assets under `public/sample-reports/`:
- * - PDF: set `fileSrc` (e.g. `/sample-reports/meridian-2024.pdf`)
- * - Cover image: set `thumbnailSrc` (e.g. `/sample-reports/meridian-2024.jpg`)
+ * Add assets under `public/sample-reports/` and reference filenames here.
  */
 export type SampleReport = {
   id: string;
@@ -17,6 +15,10 @@ export type SampleReport = {
   downloadFileName?: string;
 };
 
+export function sampleReportAsset(filename: string): string {
+  return `/sample-reports/${encodeURIComponent(filename)}`;
+}
+
 export const sampleReportsSection = {
   kicker: "Examples",
   headline: "Annual reports you can explore",
@@ -26,36 +28,44 @@ export const sampleReportsSection = {
 
 export const sampleReports: SampleReport[] = [
   {
-    id: "meridian-2024",
-    title: "Annual Report",
-    company: "Meridian Industrial Group",
-    year: 2024,
-    market: "ASX",
-    pages: 148,
-    fileSrc: "/sample-reports/meridian-2024.pdf",
-    thumbnailSrc: "/sample-reports/meridian-2024.jpg",
-    downloadFileName: "Meridian-Industrial-Group-Annual-Report-2024.pdf",
+    id: "ghcl-textiles-2026",
+    title: "6th AGM Report",
+    company: "GHCL Textiles",
+    year: 2026,
+    fileSrc: sampleReportAsset("GHCL Textiles 6th AGM 2026.pdf"),
+    thumbnailSrc: sampleReportAsset("GHCL Textiles 6th AGM 2026.jpg"),
+    downloadFileName: "GHCL-Textiles-6th-AGM-2026.pdf",
   },
   {
-    id: "northline-2024",
-    title: "Integrated Annual & Sustainability Report",
-    company: "Northline Energy",
+    id: "nwbi-2024",
+    title: "Annual Report",
+    company: "NWBI",
     year: 2024,
-    market: "NYSE",
-    pages: 212,
-    fileSrc: "/sample-reports/northline-2024.pdf",
-    thumbnailSrc: "/sample-reports/northline-2024.jpg",
-    downloadFileName: "Northline-Energy-Integrated-Report-2024.pdf",
+    market: "NASDAQ",
+    fileSrc: sampleReportAsset("NWBI NASDAQ 2024 Report.pdf"),
+    thumbnailSrc: sampleReportAsset("NWBI NASDAQ 2024 Report.jpg"),
+    downloadFileName: "NWBI-NASDAQ-2024-Report.pdf",
   },
   {
-    id: "atlas-2024",
+    id: "atsg-2022",
     title: "Annual Report",
-    company: "Atlas Pacific Holdings",
-    year: 2024,
-    market: "SGX",
-    pages: 132,
-    fileSrc: "/sample-reports/atlas-2024.pdf",
-    thumbnailSrc: "/sample-reports/atlas-2024.jpg",
-    downloadFileName: "Atlas-Pacific-Holdings-Annual-Report-2024.pdf",
+    company: "Air Transport Services Group",
+    year: 2022,
+    fileSrc: sampleReportAsset("Air Transport Services Group 2022.pdf"),
+    thumbnailSrc: sampleReportAsset("Air Transport Services Group 2022.png"),
+    downloadFileName: "Air-Transport-Services-Group-2022.pdf",
+  },
+  {
+    id: "nacco-2023",
+    title: "Annual Report",
+    company: "NACCO Industries",
+    year: 2023,
+    fileSrc: sampleReportAsset("NACCO Industries 2023 Report.pdf"),
+    thumbnailSrc: sampleReportAsset("NACCO Industries 2023 Report.jpg"),
+    downloadFileName: "NACCO-Industries-2023-Report.pdf",
   },
 ];
+
+export const sampleReportCoverImages = sampleReports
+  .map((report) => report.thumbnailSrc)
+  .filter((src): src is string => Boolean(src));

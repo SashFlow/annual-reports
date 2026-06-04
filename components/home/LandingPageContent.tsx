@@ -14,7 +14,7 @@ import {
   LineChart,
 } from "lucide-react";
 import { AnnualReportsAILogo } from "@/components/logo";
-import { ReportWorkflowHubIllustration } from "@/components/home/ReportWorkflowHubIllustration";
+import { HeroReportShowcase } from "@/components/home/HeroReportShowcase";
 import { HowItWorksPaths } from "@/components/home/HowItWorksIllustrations";
 import { LandingNav } from "@/components/home/LandingNav";
 import { FaqAccordion } from "@/components/home/FaqAccordion";
@@ -50,25 +50,25 @@ export function LandingPageContent() {
 
       <main>
         <div className="relative">
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute -top-[200px] right-[10%] h-[600px] w-[600px] rounded-full bg-lavender/[0.18] blur-[100px]" />
-            <div className="absolute -top-[100px] -left-[200px] h-[500px] w-[500px] rounded-full bg-[oklch(0.65_0.20_350)]/[0.08] blur-[80px]" />
-            <div className="absolute top-[60%] left-[40%] h-[300px] w-[300px] rounded-full bg-lavender/[0.10] blur-[80px]" />
-          </div>
-
           <div
-            className="pointer-events-none absolute inset-0 opacity-[0.035]"
+            className="pointer-events-none absolute inset-0 opacity-[0.025]"
             style={{
               backgroundImage: `radial-gradient(circle, var(--foreground) 1px, transparent 1px)`,
               backgroundSize: "24px 24px",
             }}
           />
 
-          <section className="relative">
-            <div className="mx-auto max-w-6xl px-6 pt-16 pb-12 sm:px-10 sm:pt-24 sm:pb-16 md:pt-32">
-              <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12">
-                <div className="flex-1 max-w-xl">
-                  <div className="mb-8">
+          <section className="relative overflow-hidden">
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20" />
+              <div className="absolute -top-32 right-[-8%] h-[480px] w-[480px] rounded-full bg-lavender/[0.14] blur-[100px]" />
+              <div className="absolute bottom-[-10%] left-[-12%] h-[400px] w-[400px] rounded-full bg-lavender/[0.10] blur-[90px]" />
+            </div>
+
+            <div className="relative z-10 mx-auto max-w-6xl px-6 pt-16 pb-12 sm:px-10 sm:pt-24 sm:pb-16 md:pt-32">
+              <div className="flex flex-col items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-12 lg:gap-16">
+                <div className="w-full max-w-xl flex-1 text-center md:text-left">
+                  <div className="mb-8 flex justify-center md:justify-start">
                     <AnnualReportsAILogo size="lg" variant="light" />
                   </div>
 
@@ -82,27 +82,27 @@ export function LandingPageContent() {
                     <span className="text-lavender">reporting marathon.</span>
                   </h1>
 
-                  <p className="mt-6 max-w-md text-base leading-[1.6] text-muted-foreground sm:mt-7 sm:text-lg">
+                  <p className="mx-auto mt-6 max-w-md text-base leading-[1.6] text-muted-foreground sm:mt-7 sm:text-lg md:mx-0">
                     {hero.subhead}
                   </p>
 
-                  <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4">
+                  <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center md:justify-start sm:gap-4">
                     <Link
                       href="/early-access"
-                      className="group inline-flex items-center justify-center gap-2 rounded-[10px] bg-foreground px-7 py-3 text-base font-semibold text-background transition-all hover:opacity-90"
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-foreground px-7 py-3 text-base font-semibold text-background transition-all hover:opacity-90 sm:w-auto"
                     >
                       Join the founding batch{" "}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </Link>
                     <a
                       href="#how-it-works"
-                      className="inline-flex items-center justify-center rounded-[10px] border border-border bg-white px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-muted"
+                      className="inline-flex w-full items-center justify-center rounded-[10px] border border-border bg-background px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-muted sm:w-auto"
                     >
                       See how it works
                     </a>
                   </div>
 
-                  <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+                  <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground md:justify-start">
                     {hero.trustChips.map((chip) => (
                       <span
                         key={chip}
@@ -115,12 +115,17 @@ export function LandingPageContent() {
                   </div>
                 </div>
 
-                <div className="w-full max-w-md lg:max-w-xl flex-shrink-0">
-                  <ReportWorkflowHubIllustration />
+                <div className="w-full max-w-[280px] shrink-0 sm:max-w-xs md:max-w-sm lg:max-w-md">
+                  <HeroReportShowcase />
                 </div>
               </div>
             </div>
           </section>
+
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute top-[55%] right-[5%] h-[500px] w-[500px] rounded-full bg-lavender/[0.12] blur-[100px]" />
+            <div className="absolute top-[70%] -left-[180px] h-[420px] w-[420px] rounded-full bg-[oklch(0.65_0.20_350)]/[0.06] blur-[80px]" />
+          </div>
 
           <section className="relative">
             <div className="mx-auto max-w-6xl px-6 sm:px-10">

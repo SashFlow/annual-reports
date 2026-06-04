@@ -73,23 +73,23 @@ function SampleReportCard({ report }: { report: SampleReport }) {
       </h3>
       <p className="mt-1 text-sm text-muted-foreground">{report.company}</p>
 
-      <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+      <div className="mt-5 flex items-center gap-2">
         <a
           href={report.fileSrc}
           download={report.downloadFileName}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-[10px] bg-foreground px-4 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+          aria-label={`Download ${report.company} ${report.year} ${report.title}`}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] bg-foreground text-background transition-opacity hover:opacity-90"
         >
           <Download className="h-4 w-4" />
-          Download PDF
         </a>
         <Link
           href={report.fileSrc}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-[10px] border border-border bg-white px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          aria-label={`Open ${report.company} ${report.year} ${report.title}`}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-border bg-white text-foreground transition-colors hover:bg-muted"
         >
           <ExternalLink className="h-4 w-4" />
-          Open
         </Link>
       </div>
     </article>
@@ -112,7 +112,7 @@ export function SampleReportsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {sampleReports.map((report) => (
             <SampleReportCard key={report.id} report={report} />
           ))}
