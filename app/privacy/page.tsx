@@ -19,8 +19,7 @@ export default function PrivacyPage() {
         Annual Reports AI (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;)
         is building an AI reporting workflow platform for corporate reporting
         teams. This Privacy Policy explains how we collect, use, disclose, and
-        safeguard information when you use our website and early access
-        program.
+        safeguard information when you use our website and early access program.
       </p>
 
       <h2 className="text-lg font-semibold text-foreground pt-4">
@@ -55,9 +54,9 @@ export default function PrivacyPage() {
 
       <h2 className="text-lg font-semibold text-foreground pt-4">Security</h2>
       <p>
-        We are designing for encrypted-in-transit and encrypted-at-rest
-        storage, role-based access, and audit logging. Production security
-        details will be shared with founding teams before onboarding.
+        We are designing for encrypted-in-transit and encrypted-at-rest storage,
+        role-based access, and audit logging. Production security details will
+        be shared with founding teams before onboarding.
       </p>
 
       <h2 className="text-lg font-semibold text-foreground pt-4">
@@ -66,11 +65,11 @@ export default function PrivacyPage() {
       <p>
         Depending on your jurisdiction, you may have rights to access, correct,
         or delete personal information we hold about you. Contact us at
-        sai@sashflow.com to submit a request.
+        growth@sashflow.com to submit a request.
       </p>
 
       <h2 className="text-lg font-semibold text-foreground pt-4">Contact</h2>
-      <p>Questions about this policy? Email sai@sashflow.com.</p>
+      <p>Questions about this policy? Email growth@sashflow.com.</p>
     </LegalPage>
   );
 }

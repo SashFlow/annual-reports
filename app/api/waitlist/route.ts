@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         ? body.name.trim()
         : "there";
     const { error } = await resend.emails.send({
-      from: "Waitlist Template <no-reply@sashflow.com>",
+      from: "Report Deck <growth@sashflow.com>",
       to: email,
       subject: `You're on the ${siteConfig.name} founding list`,
       react: WelcomeTemplate({ userFirstName: displayName }),
