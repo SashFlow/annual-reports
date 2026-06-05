@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -12,6 +12,11 @@ import {
   Mail,
 } from "lucide-react";
 import { AnnualReportsAILogo } from "@/components/logo";
+import {
+  trackEarlyAccessStepCompleted,
+  trackEarlyAccessStepViewed,
+  trackEarlyAccessSurveySubmitted,
+} from "@/lib/analytics";
 import { toast } from "sonner";
 
 const REPORT_TYPES = [
@@ -22,16 +27,6 @@ const REPORT_TYPES = [
   "Board",
   "Investor",
 ];
-const REPORTS_PER_YEAR = ["1-2", "3-5", "6-10", "11-20", "20+"];
-const PEOPLE_INVOLVED = ["1-3", "4-10", "11-25", "26-50", "50+"];
-const CYCLE_LENGTH = [
-  "Under 2 weeks",
-  "2-4 weeks",
-  "1-2 months",
-  "2-3 months",
-  "3+ months",
-];
-const TOOLS = ["Excel", "Word", "PowerPoint", "ERP", "BI Tools"];
 const CHALLENGES = [
   "Data collection",
   "Validation",
@@ -39,8 +34,6 @@ const CHALLENGES = [
   "Review cycles",
   "Compliance",
 ];
-const COMPANY_SIZE = ["1-50", "51-200", "201-1,000", "1,001-5,000", "5,000+"];
-const PAY_50 = ["Yes", "No", "Depends"];
 const BUDGET = [
   "Under $5k/year",
   "$5k-$25k/year",
@@ -51,15 +44,8 @@ const BUDGET = [
 
 type Answers = {
   report_types: string[];
-  reports_per_year: string | null;
-  people_involved: string | null;
-  cycle_length: string | null;
-  tools: string[];
   biggest_challenge: string | null;
-  company_size: string | null;
-  pay_for_50_reduction: string | null;
   budget_range: string | null;
-  wants_early_access: boolean | null;
   name: string;
   email: string;
   notes: string;
@@ -68,15 +54,8 @@ type Answers = {
 
 const initial: Answers = {
   report_types: [],
-  reports_per_year: null,
-  people_involved: null,
-  cycle_length: null,
-  tools: [],
   biggest_challenge: null,
-  company_size: null,
-  pay_for_50_reduction: null,
   budget_range: null,
-  wants_early_access: null,
   name: "",
   email: "",
   notes: "",
@@ -152,23 +131,28 @@ export function EarlyAccessSurvey() {
   const [showEmailNudge, setShowEmailNudge] = useState(false);
   const [done, setDone] = useState(false);
 
+  useEffect(() => {
+    trackEarlyAccessStepViewed(step);
+  }, [step]);
+
   const set = <K extends keyof Answers>(k: K, v: Answers[K]) =>
     setA((p) => ({ ...p, [k]: v }));
-  const toggleArr = (k: "report_types" | "tools", v: string) =>
+  const toggleReportType = (v: string) =>
     setA((p) => ({
       ...p,
-      [k]: p[k].includes(v) ? p[k].filter((x) => x !== v) : [...p[k], v],
+      report_types: p.report_types.includes(v)
+        ? p.report_types.filter((x) => x !== v)
+        : [...p.report_types, v],
     }));
 
   const sections = useMemo(
     () => [
       {
-        canSkip: false,
         valid: a.report_types.length > 0,
         render: (
           <SectionShell
-            kicker="Section 1 · Your reports"
-            title="What type of reports do you create?"
+            kicker="Step 1 · Your reports"
+            title="What reports does your team produce?"
             subtitle="Select all that apply."
           >
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -176,7 +160,7 @@ export function EarlyAccessSurvey() {
                 <Chip
                   key={t}
                   active={a.report_types.includes(t)}
-                  onClick={() => toggleArr("report_types", t)}
+                  onClick={() => toggleReportType(t)}
                 >
                   {t}
                 </Chip>
@@ -186,94 +170,11 @@ export function EarlyAccessSurvey() {
         ),
       },
       {
-        canSkip: true,
-        valid: !!a.reports_per_year && !!a.people_involved && !!a.cycle_length,
-        render: (
-          <SectionShell
-            kicker="Section 2 · Volume & team"
-            title="How does your reporting cycle run today?"
-          >
-            <div className="space-y-3">
-              <QuestionLabel>
-                How many reports do you produce annually?
-              </QuestionLabel>
-              <div className="flex flex-wrap gap-2">
-                {REPORTS_PER_YEAR.map((s) => (
-                  <Chip
-                    key={s}
-                    active={a.reports_per_year === s}
-                    onClick={() => set("reports_per_year", s)}
-                  >
-                    {s}
-                  </Chip>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-3">
-              <QuestionLabel>
-                How many people are involved in report creation?
-              </QuestionLabel>
-              <div className="flex flex-wrap gap-2">
-                {PEOPLE_INVOLVED.map((s) => (
-                  <Chip
-                    key={s}
-                    active={a.people_involved === s}
-                    onClick={() => set("people_involved", s)}
-                  >
-                    {s}
-                  </Chip>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-3">
-              <QuestionLabel>
-                How long does a typical reporting cycle take?
-              </QuestionLabel>
-              <div className="flex flex-wrap gap-2">
-                {CYCLE_LENGTH.map((s) => (
-                  <Chip
-                    key={s}
-                    active={a.cycle_length === s}
-                    onClick={() => set("cycle_length", s)}
-                  >
-                    {s}
-                  </Chip>
-                ))}
-              </div>
-            </div>
-          </SectionShell>
-        ),
-      },
-      {
-        canSkip: true,
-        valid: a.tools.length > 0,
-        render: (
-          <SectionShell
-            kicker="Section 3 · Your stack"
-            title="What tools do you currently use?"
-            subtitle="Select all that apply."
-          >
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {TOOLS.map((t) => (
-                <Chip
-                  key={t}
-                  active={a.tools.includes(t)}
-                  onClick={() => toggleArr("tools", t)}
-                >
-                  {t}
-                </Chip>
-              ))}
-            </div>
-          </SectionShell>
-        ),
-      },
-      {
-        canSkip: true,
         valid: !!a.biggest_challenge,
         render: (
           <SectionShell
-            kicker="Section 4 · Pain"
-            title="What's your biggest reporting challenge?"
+            kicker="Step 2 · Your biggest blocker"
+            title="What's hardest about reporting today?"
           >
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {CHALLENGES.map((c) => (
@@ -290,90 +191,34 @@ export function EarlyAccessSurvey() {
         ),
       },
       {
-        canSkip: true,
-        valid: !!a.company_size && !!a.pay_for_50_reduction && !!a.budget_range,
+        valid: !!a.budget_range,
         render: (
           <SectionShell
-            kicker="Section 5 · Fit & budget"
-            title="Help us understand fit and willingness to invest"
+            kicker="Step 3 · Budget"
+            title="What would you budget annually for a tool that cuts reporting time in half?"
           >
-            <div className="space-y-3">
-              <QuestionLabel>Company size?</QuestionLabel>
-              <div className="flex flex-wrap gap-2">
-                {COMPANY_SIZE.map((s) => (
-                  <Chip
-                    key={s}
-                    active={a.company_size === s}
-                    onClick={() => set("company_size", s)}
-                  >
-                    {s} employees
-                  </Chip>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-3">
-              <QuestionLabel>
-                Would you pay for a solution that reduces reporting time by
-                50%+?
-              </QuestionLabel>
-              <div className="flex flex-wrap gap-2">
-                {PAY_50.map((s) => (
-                  <Chip
-                    key={s}
-                    active={a.pay_for_50_reduction === s}
-                    onClick={() => set("pay_for_50_reduction", s)}
-                  >
-                    {s}
-                  </Chip>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-3">
-              <QuestionLabel>Budget range?</QuestionLabel>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {BUDGET.map((s) => (
-                  <Chip
-                    key={s}
-                    active={a.budget_range === s}
-                    onClick={() => set("budget_range", s)}
-                  >
-                    {s}
-                  </Chip>
-                ))}
-              </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {BUDGET.map((s) => (
+                <Chip
+                  key={s}
+                  active={a.budget_range === s}
+                  onClick={() => set("budget_range", s)}
+                >
+                  {s}
+                </Chip>
+              ))}
             </div>
           </SectionShell>
         ),
       },
       {
-        canSkip: false,
-        valid:
-          a.wants_early_access !== null &&
-          a.email.trim().length > 3 &&
-          a.email.includes("@"),
+        valid: a.email.trim().length > 3 && a.email.includes("@"),
         render: (
           <SectionShell
-            kicker="Section 6 · Early access"
-            title="Want early access?"
+            kicker="Step 4 · Early access"
+            title="Almost done"
             subtitle="We only contact you about Annual Reports AI — founding batch updates and onboarding."
           >
-            <div className="space-y-3">
-              <QuestionLabel>Join the founding batch?</QuestionLabel>
-              <div className="flex gap-2">
-                <Chip
-                  active={a.wants_early_access === true}
-                  onClick={() => set("wants_early_access", true)}
-                >
-                  Yes
-                </Chip>
-                <Chip
-                  active={a.wants_early_access === false}
-                  onClick={() => set("wants_early_access", false)}
-                >
-                  No, just sharing feedback
-                </Chip>
-              </div>
-            </div>
             <div className="space-y-3">
               <QuestionLabel>Name</QuestionLabel>
               <input
@@ -422,6 +267,20 @@ export function EarlyAccessSurvey() {
   const isLast = step === total - 1;
   const progress = ((step + 1) / total) * 100;
 
+  const completeStep = () => {
+    const data: Record<string, string | number | boolean> = {};
+    if (step === 0) data.selection_count = a.report_types.length;
+    if (step === 1 && a.biggest_challenge) {
+      data.biggest_challenge = a.biggest_challenge;
+    }
+    if (step === 2 && a.budget_range) data.budget_range = a.budget_range;
+    if (step === 3) {
+      data.has_name = a.name.trim().length > 0;
+      data.has_notes = a.notes.trim().length > 0;
+    }
+    trackEarlyAccessStepCompleted(step, data);
+  };
+
   const submit = async (opts?: {
     skipEmail?: boolean;
     skipReason?: string;
@@ -429,15 +288,9 @@ export function EarlyAccessSurvey() {
     setSubmitting(true);
     const payload = {
       report_types: a.report_types.length ? a.report_types : null,
-      reports_per_year: a.reports_per_year,
-      people_involved: a.people_involved,
-      cycle_length: a.cycle_length,
-      tools: a.tools.length ? a.tools : null,
       biggest_challenge: a.biggest_challenge,
-      company_size: a.company_size,
-      pay_for_50_reduction: a.pay_for_50_reduction,
       budget_range: a.budget_range,
-      wants_early_access: a.wants_early_access,
+      wants_early_access: opts?.skipEmail ? false : true,
       name: a.name || null,
       email: opts?.skipEmail ? null : a.email || null,
       notes: a.notes || null,
@@ -451,6 +304,7 @@ export function EarlyAccessSurvey() {
       });
 
       if (res.ok) {
+        trackEarlyAccessSurveySubmitted({ with_email: !opts?.skipEmail });
         setDone(true);
         return;
       }
@@ -526,6 +380,7 @@ export function EarlyAccessSurvey() {
               disabled={submitting}
               onClick={() => {
                 setShowEmailNudge(false);
+                completeStep();
                 submit({
                   skipEmail: true,
                   skipReason: a.skip_reason || "declined",
@@ -592,20 +447,14 @@ export function EarlyAccessSurvey() {
           </button>
 
           <div className="flex items-center gap-2">
-            {current.canSkip && !isLast && (
-              <button
-                type="button"
-                onClick={() => setStep((s) => Math.min(total - 1, s + 1))}
-                className="rounded-[10px] px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground"
-              >
-                Skip
-              </button>
-            )}
             {isLast ? (
               <button
                 type="button"
                 disabled={!current.valid || submitting}
-                onClick={() => submit()}
+                onClick={() => {
+                  completeStep();
+                  submit();
+                }}
                 className="inline-flex items-center gap-1.5 rounded-[10px] bg-foreground px-6 py-2.5 text-sm font-semibold text-background transition-all disabled:opacity-50"
               >
                 {submitting ? (
@@ -619,7 +468,10 @@ export function EarlyAccessSurvey() {
               <button
                 type="button"
                 disabled={!current.valid}
-                onClick={() => setStep((s) => Math.min(total - 1, s + 1))}
+                onClick={() => {
+                  completeStep();
+                  setStep((s) => Math.min(total - 1, s + 1));
+                }}
                 className="inline-flex items-center gap-1.5 rounded-[10px] bg-foreground px-6 py-2.5 text-sm font-semibold text-background transition-all disabled:opacity-40"
               >
                 Continue <ArrowRight className="h-4 w-4" />

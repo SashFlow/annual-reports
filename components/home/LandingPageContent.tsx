@@ -91,7 +91,7 @@ export function LandingPageContent() {
                       href="/early-access"
                       className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-foreground px-7 py-3 text-base font-semibold text-background transition-all hover:opacity-90 sm:w-auto"
                     >
-                      Join the founding batch{" "}
+                      Lets solve your problems{" "}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </Link>
                     <a

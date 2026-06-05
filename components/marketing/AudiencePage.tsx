@@ -111,7 +111,7 @@ export function AudiencePage({
               href="/early-access"
               className="group mt-6 inline-flex items-center gap-2 rounded-[10px] bg-lavender px-6 py-3 text-sm font-semibold text-foreground"
             >
-              Join the founding batch
+              Lets solve your problems
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>

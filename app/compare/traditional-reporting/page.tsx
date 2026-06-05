@@ -88,7 +88,7 @@ export default function TraditionalReportingComparePage() {
               href="/early-access"
               className="group inline-flex items-center gap-2 rounded-[10px] bg-foreground px-7 py-3 text-base font-semibold text-background"
             >
-              Join the founding batch{" "}
+              Lets solve your problems{" "}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>

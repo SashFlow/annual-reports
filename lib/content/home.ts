@@ -164,5 +164,5 @@ export const cta = {
   headline: "Stop reporting on spreadsheets alone.",
   body:
     "We're hand-picking founding teams to shape the next AI reporting workflow platform. A five-minute assessment — your answers go straight to the team building it.",
-  button: "Join the founding batch",
+  button: "Lets solve your problems",
 } as const;

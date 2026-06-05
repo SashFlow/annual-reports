@@ -1,3 +1,4 @@
+import { CalEmbedFloatingButton } from "@/components/home/CalEmbedFloatingButton";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { LandingPageContent } from "@/components/home/LandingPageContent";
 import { faqs } from "@/lib/content/faqs";
@@ -11,6 +12,7 @@ export default function HomePage() {
     <>
       <JsonLd data={[softwareApplicationSchema(), faqPageSchema(faqs)]} />
       <LandingPageContent />
+      <CalEmbedFloatingButton />
     </>
   );
 }
